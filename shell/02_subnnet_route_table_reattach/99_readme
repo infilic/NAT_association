@@ -1,0 +1,16 @@
+実行はこのディレクトリから実施してください
+
+***fileの説明***
+
+00_NAT_exchange_associate - main_shell
+01_getRouteTableAssociationId - RouteTableAssociationIdを取得し03,04に出力
+02_getSubnetId - SubnetIdを取得し07,08に出力
+03_RouteTableAssociationId_main - 「01_getRouteTableAssociationId」を実行することにより自動で上書きされる
+04_RouteTableAssociationId_sub - 「01_getRouteTableAssociationId」を実行することにより自動で上書きされる
+05_RouteTableID_main - 事前に手動入力
+06_RouteTableID_sub - 事前に手動入力
+07_SubnetID_main - 「02_getSubnetId」を実行することにより自動で上書きされる
+08_SubnetID_sub - 「02_getSubnetId」を実行することにより自動で上書きされる
+09_before_setting - 「00_NAT_exchange_associate」を実行することにより自動で上書きされる
+10_after_setting - 「00_NAT_exchange_associate」を実行することにより自動で上書きされる
+

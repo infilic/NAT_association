@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+RT_main=`cat ./05_RouteTableID_main`
+RT_sub=`cat ./06_RouteTableID_sub`
+
+
+#primaryNAT用のRouteTableAssociationIdをテキストに出力
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=$RT_main" --query "RouteTables[*].Associations[*].[SubnetId]" --output text > ./07_SubnetID_main
+
+
+#secondaryNAT用のRouteTableAssociationIdをテキストに出力
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=$RT_sub" --query "RouteTables[*].Associations[*].[SubnetId]" --output text > ./08_SubnetID_sub
+

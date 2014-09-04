@@ -1,0 +1,10 @@
+#!/bin/bash
+
+RTprimary=`cat ./02_primaryNAT_RT`
+RTsecondary=`cat ./03_secondaryNAT_RT`
+
+#primaryNATのRouteTableAssociationIdをテキストに出力
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=$RTprimary"  --query "RouteTables[*].Associations[*].[RouteTableAssociationId]" --output text > ./04_RouteTableAssociationId_primaryNAT_RT
+
+#secandaryNATのRouteTableAssociationIdをテキストに出力
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=$RTsecondary"  --query "RouteTables[*].Associations[*].[RouteTableAssociationId]" --output text > ./05_RouteTableAssociationId_secondaryNAT_RT

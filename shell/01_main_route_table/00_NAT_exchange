@@ -1,0 +1,39 @@
+#!/bin/bash
+
+sh ./01_getRouteTableAssociationId
+
+
+echo "NATインスタンスを切り替えます"
+
+echo "1) PrimaryからSecondaryに切り替えますか?"
+echo "2) SecondaryからPrimaryに切り替えますか?"
+echo "3) 切り替えずに終了しますか?"
+
+read select123
+case $select123 in
+     1)
+	echo 'PrimaryからSecondaryへの切り替えをスタートします。'
+
+	REGION='ap-northeast-1'
+	ASSOCIATERT=`cat ./04_RouteTableAssociationId_primaryNAT_RT`
+	CHANGERT=`cat ./03_secondaryNAT_RT`
+
+	aws ec2 replace-route-table-association --region $REGION --association-id $ASSOCIATERT --route-table-id $CHANGERT
+
+	;;
+     2)
+        echo 'SecondaryからPrimaryへの切り替えをスタートします。'
+
+        REGION='ap-northeast-1'
+        ASSOCIATERT=`cat ./05_RouteTableAssociationId_secondaryNAT_RT`
+        CHANGERT=`cat ./02_primaryNAT_RT`
+
+        aws ec2 replace-route-table-association --region $REGION --association-id $ASSOCIATERT --route-table-id $CHANGERT
+
+        ;;
+     *)
+	echo '終了します。'
+	;;
+esac
+
+

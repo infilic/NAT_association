@@ -1,0 +1,64 @@
+#!/bin/bash
+
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=rtb-b2ff08d7" --output table > 09_before_setting
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=rtb-a39e69c6" --output table >> 09_before_setting
+
+
+sh ./01_getRouteTableAssociationId
+sh ./02_getSubnetId
+
+echo "NATインスタンスを切り替えます"
+
+echo "1) PrimaryからSecondaryに切り替えますか?"
+echo "2) SecondaryからPrimaryに切り替えますか?"
+echo "3) 切り替えずに終了しますか?"
+
+read select123
+case $select123 in
+     1)
+        echo 'PrimaryからSecondaryへの切り替えをスタートします。'
+
+        REGION='ap-northeast-1'
+
+	for RouteTableAssociationId in `cat ./03_RouteTableAssociationId_main`
+	do
+		aws ec2 disassociate-route-table --region $REGION --association-id $RouteTableAssociationId
+	done
+
+	RT=`cat ./06_RouteTableID_sub`
+        
+	for SUBNET in `cat ./07_SubnetID_main`
+	do
+		aws ec2 associate-route-table --region $REGION --subnet-id $SUBNET --route-table-id $RT
+	done
+
+        ;;
+     2)
+        echo 'SecondaryからPrimaryへの切り替えをスタートします。'
+
+        REGION='ap-northeast-1'
+
+        for RouteTableAssociationId in `cat ./04_RouteTableAssociationId_sub`
+        do
+                aws ec2 disassociate-route-table --region $REGION --association-id $RouteTableAssociationId
+        done
+
+        RT=`cat ./05_RouteTableID_main`
+
+        for SUBNET in `cat ./08_SubnetID_sub`
+        do
+                aws ec2 associate-route-table --region $REGION --subnet-id $SUBNET --route-table-id $RT
+        done
+        ;;
+     *)
+        echo '終了します。'
+        ;;
+esac
+
+
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=rtb-b2ff08d7" --output table > 10_after_setting
+aws ec2 describe-route-tables --filters "Name=route-table-id","Values=rtb-a39e69c6" --output table >> 10_after_setting
+
+
+
+
